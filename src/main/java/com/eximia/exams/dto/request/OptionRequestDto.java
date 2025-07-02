@@ -17,9 +17,14 @@ public class OptionRequestDto {
     @Size(max = 500, message = "Option text must not exceed 500 characters")
     private String optionText;
 
+    @Builder.Default
     private Boolean isCorrect = false;
+
     private String explanation;
+
     private Integer orderIndex;
+
     private String matchTarget;
+
     private String fillInAnswer;
 }
