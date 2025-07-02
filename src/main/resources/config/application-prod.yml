@@ -1,0 +1,47 @@
+# Application configuration for Production
+
+spring:
+  data:
+    mongodb:
+      uri: ${MONGODB_URI}
+      auto-index-creation: false
+
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+    virtual-host: ${RABBITMQ_VHOST:/}
+    connection-timeout: 30000
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 2000
+          max-attempts: 5
+          max-interval: 30000
+          multiplier: 3
+        acknowledge-mode: manual
+        prefetch: 20
+        concurrency: 10
+        max-concurrency: 20
+
+logging:
+  level:
+    com.eximia.exams: INFO
+    org.springframework.amqp: WARN
+    org.springframework.data.mongodb: WARN
+    root: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/exams-service.log
+    max-size: 100MB
+    max-history: 30
+
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false

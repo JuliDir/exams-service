@@ -1,0 +1,45 @@
+services:
+  mongodb:
+    image: mongo:5.0
+    container_name: exam-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: exam_db
+    volumes:
+      - mongodb_data:/data/db
+
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    container_name: exam-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: password
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  exam-service:
+    build: .
+    container_name: exam-service
+    ports:
+      - "8080:8080"
+    environment:
+      MONGODB_HOST: mongodb
+      MONGODB_DATABASE: exam_db
+      MONGODB_USERNAME: admin
+      MONGODB_PASSWORD: password
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USERNAME: admin
+      RABBITMQ_PASSWORD: password
+    depends_on:
+      - mongodb
+      - rabbitmq
+
+volumes:
+  mongodb_data:
+  rabbitmq_data:
