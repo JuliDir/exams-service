@@ -4,6 +4,7 @@ spring:
   data:
     mongodb:
       uri: ${MONGODB_URI}
+      database: ${MONGODB_DATABASE}
       auto-index-creation: false
 
   rabbitmq:

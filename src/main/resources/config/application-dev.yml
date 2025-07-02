@@ -3,7 +3,8 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/exam_service_db
+      uri: mongodb://admin:password@localhost:27017/exam_db?authSource=admin
+      database: exam_db
       auto-index-creation: true
 
   rabbitmq:

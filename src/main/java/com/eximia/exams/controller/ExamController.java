@@ -22,7 +22,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/exams")
+@RequestMapping("/exams")
 @RequiredArgsConstructor
 @Validated
 public class ExamController {
@@ -45,7 +45,7 @@ public class ExamController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<Page<ExamResponseDto>> getAllActiveExams(
             @PageableDefault(size = 20) Pageable pageable) {
         log.info("REST: Fetching active exams with pagination");
