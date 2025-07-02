@@ -23,23 +23,6 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
-  exam-service:
-    build: .
-    container_name: exam-service
-    ports:
-      - "8080:8080"
-    environment:
-      MONGODB_HOST: mongodb
-      MONGODB_DATABASE: exam_db
-      MONGODB_USERNAME: admin
-      MONGODB_PASSWORD: password
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_USERNAME: admin
-      RABBITMQ_PASSWORD: password
-    depends_on:
-      - mongodb
-      - rabbitmq
-
 volumes:
   mongodb_data:
   rabbitmq_data:

@@ -1,0 +1,9 @@
+${AnsiColor.CYAN}███████╗${AnsiColor.MAGENTA} ██╗  ██╗ ██╗ ███╗   ███╗ ██╗  █████╗
+${AnsiColor.CYAN}██╔════╝${AnsiColor.MAGENTA} ╚██╗██╔╝ ██║ ████╗ ████║ ██║ ██╔══██╗
+${AnsiColor.CYAN}█████╗  ${AnsiColor.MAGENTA}  ╚███╔╝  ██║ ██╔████╔██║ ██║ ███████║
+${AnsiColor.CYAN}██╔══╝  ${AnsiColor.MAGENTA}  ██╔██╗  ██║ ██║╚██╔╝██║ ██║ ██╔══██║
+${AnsiColor.CYAN}███████╗${AnsiColor.MAGENTA} ██╔╝ ██╗ ██║ ██║ ╚═╝ ██║ ██║ ██║  ██║
+${AnsiColor.CYAN}╚══════╝${AnsiColor.MAGENTA} ╚═╝  ╚═╝ ╚═╝ ╚═╝     ╚═╝ ╚═╝ ╚═╝  ╚═╝
+
+${AnsiColor.BRIGHT_BLUE}:: EXIMIA - Exams generator AI Powered :: Running exams-service on Spring Boot ${spring-boot.version} ::
+:: Startup profile(s) ${spring.profiles.active}

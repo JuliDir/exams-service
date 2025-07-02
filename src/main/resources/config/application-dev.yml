@@ -9,8 +9,8 @@ spring:
   rabbitmq:
     host: localhost
     port: 5672
-    username: guest
-    password: guest
+    username: admin
+    password: password
     virtual-host: /
     connection-timeout: 30000
     listener:
@@ -32,8 +32,6 @@ logging:
     org.springframework.amqp: DEBUG
     org.springframework.data.mongodb: DEBUG
     org.springframework.web: DEBUG
-  pattern:
-    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(%-5level){highlight} %clr([%thread]){magenta} %clr(%logger{36}){cyan} %clr(:){faint} %clr(%msg){green}%n"
 
 springdoc:
   swagger-ui:
