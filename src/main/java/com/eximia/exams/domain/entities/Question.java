@@ -27,20 +27,8 @@ public class Question {
     @Field("points")
     private Double points;
 
-    @Field("is_required")
-    private Boolean isRequired;
-
-    @Field("explanation")
-    private String explanation;
-
     @Field("options")
     private List<Option> options;
-
-    @Field("correct_answer")
-    private String correctAnswer;
-
-    @Field("time_limit_seconds")
-    private Integer timeLimitInSeconds;
 
     @Field("order_index")
     private Integer orderIndex;

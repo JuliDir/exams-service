@@ -25,10 +25,9 @@ public class ExamRequestDto {
     @Positive(message = "Duration must be positive")
     private Integer durationInMinutes;
 
-    @PositiveOrZero(message = "Total points must be positive or zero")
-    private Double totalPoints;
-
-    @PositiveOrZero(message = "Passing score must be positive or zero")
+    @NotNull(message = "Passing score is required")
+    @Min(value = 0, message = "Passing score must be at least 0")
+    @Max(value = 100, message = "Passing score must not exceed 100")
     private Double passingScore;
 
     @Valid
@@ -41,4 +40,7 @@ public class ExamRequestDto {
     private String category;
 
     private String difficultyLevel;
+
+    @NotNull(message = "Allow multiple choice configuration is required")
+    private Boolean allowMultipleChoice;
 }

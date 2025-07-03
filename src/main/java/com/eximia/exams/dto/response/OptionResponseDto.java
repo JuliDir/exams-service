@@ -10,12 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OptionResponseDto {
-
     private String optionId;
     private String optionText;
     private Boolean isCorrect;
-    private String explanation;
     private Integer orderIndex;
-    private String matchTarget;
     private String fillInAnswer;
+    private Double points;
 }

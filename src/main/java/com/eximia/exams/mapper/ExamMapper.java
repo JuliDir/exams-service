@@ -15,7 +15,6 @@ public interface ExamMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
-    @Mapping(target = "isActive", constant = "true")
     Exam toEntity(ExamRequestDto requestDto);
 
     ExamResponseDto toResponseDto(Exam exam);

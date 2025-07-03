@@ -13,15 +13,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuestionResponseDto {
-
     private String questionId;
     private String questionText;
     private QuestionType questionType;
     private Double points;
-    private Boolean isRequired;
-    private String explanation;
     private List<OptionResponseDto> options;
-    private String correctAnswer;
-    private Integer timeLimitInSeconds;
     private Integer orderIndex;
 }

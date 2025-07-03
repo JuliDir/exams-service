@@ -14,11 +14,11 @@ public interface ExamService {
 
     ExamResponseDto getExamById(String id);
 
-    Page<ExamResponseDto> getAllActiveExams(Pageable pageable);
+    Page<ExamResponseDto> getAllExams(Pageable pageable);
 
     List<ExamResponseDto> getExamsByCreator(String createdBy);
 
-    List<ExamResponseDto> getExamsByCategory(String category);
+    List<ExamResponseDto> getExamsBySubject(String subject);
 
     List<ExamResponseDto> searchExamsByTitle(String title);
 
@@ -27,8 +27,6 @@ public interface ExamService {
     List<ExamResponseDto> getExamsByPointsRange(Double minPoints, Double maxPoints);
 
     ExamResponseDto updateExam(String id, ExamRequestDto examRequestDto);
-
-    void deactivateExam(String id);
 
     void deleteExam(String id);
 }

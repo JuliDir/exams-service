@@ -21,14 +21,11 @@ public class Option {
     @Field("is_correct")
     private Boolean isCorrect;
 
-    @Field("explanation")
-    private String explanation;
+    @Field("points")
+    private Double points;
 
     @Field("order_index")
     private Integer orderIndex;
-
-    @Field("match_target")
-    private String matchTarget;
 
     @Field("fill_in_answer")
     private String fillInAnswer;
