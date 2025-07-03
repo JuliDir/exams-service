@@ -48,6 +48,8 @@ app:
   mongodb:
     collections:
       exams: exams
+      questions: questions
+      options: options
 
 springdoc:
   api-docs:

@@ -22,6 +22,11 @@ public class ExamResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String createdBy;
+    private String updatedBy;
     private String subject;
     private String difficultyLevel;
+    private Boolean allowMultipleChoice;
+    private Boolean allowTrueFalse;
+    private Double totalPoints;
+    private List<String> questionIds;
 }

@@ -1,16 +1,16 @@
 package com.eximia.exams.service.impl;
 
 import com.eximia.exams.domain.entities.Exam;
-import com.eximia.exams.domain.entities.Question;
 import com.eximia.exams.dto.request.ExamRequestDto;
+import com.eximia.exams.dto.request.QuestionRequestDto;
 import com.eximia.exams.dto.response.ExamResponseDto;
+import com.eximia.exams.dto.response.QuestionResponseDto;
 import com.eximia.exams.exception.ExamNotFoundException;
 import com.eximia.exams.exception.ValidationException;
 import com.eximia.exams.mapper.ExamMapper;
-import com.eximia.exams.mapper.QuestionMapper;
 import com.eximia.exams.repository.ExamRepository;
 import com.eximia.exams.service.ExamService;
-import com.eximia.exams.service.QuestionValidationFactory;
+import com.eximia.exams.service.QuestionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,25 +30,41 @@ public class ExamServiceImpl implements ExamService {
 
     private final ExamRepository examRepository;
     private final ExamMapper examMapper;
-    private final QuestionMapper questionMapper;
-    private final QuestionValidationFactory questionValidationFactory;
+    private final QuestionService questionService;
+
+    private static final double MAX_POINTS = 100.0;
 
     @Override
     @Transactional
     public ExamResponseDto createExam(ExamRequestDto examRequestDto) {
         log.info("Creating exam with title: {}", examRequestDto.getTitle());
 
-        validateExamDoesNotExist(examRequestDto.getTitle(), examRequestDto.getCreatedBy());
-        examRequestDto.getQuestions().forEach(qDto -> {
-            Question question = questionMapper.toEntity(qDto);
-            questionValidationFactory.forType(question.getQuestionType()).validate(question);
-        });
+        // Create exam entity first
+        Exam exam = examMapper.createEntity(examRequestDto);
+        exam.setQuestionIds(new ArrayList<>());
+        exam.setTotalPoints(MAX_POINTS);
 
-        Exam exam = examMapper.toEntity(examRequestDto);
         Exam savedExam = examRepository.save(exam);
 
+        // Create questions
+        List<String> questionIds = new ArrayList<>();
+
+        for (QuestionRequestDto questionRequestDto : examRequestDto.getQuestions()) {
+            QuestionResponseDto createdQuestion = questionService.createQuestion(savedExam.getId(), questionRequestDto);
+            questionIds.add(createdQuestion.getId());
+        }
+
+        // Update exam with question IDs
+        savedExam.setQuestionIds(questionIds);
+        savedExam = examRepository.save(savedExam);
+
         log.info("Exam created successfully with ID: {}", savedExam.getId());
-        return examMapper.toResponseDto(savedExam);
+
+        // Return response with questions loaded
+        ExamResponseDto responseDto = examMapper.toResponseDto(savedExam);
+        responseDto.setQuestions(questionService.getQuestionsByExamId(savedExam.getId()));
+
+        return responseDto;
     }
 
     @Override
@@ -56,7 +73,12 @@ public class ExamServiceImpl implements ExamService {
         log.info("Fetching exam with ID: {}", id);
 
         Exam exam = findExamByIdOrThrow(id);
-        return examMapper.toResponseDto(exam);
+        ExamResponseDto responseDto = examMapper.toResponseDto(exam);
+
+        // Load questions
+        responseDto.setQuestions(questionService.getQuestionsByExamId(id));
+
+        return responseDto;
     }
 
     @Override
@@ -65,7 +87,11 @@ public class ExamServiceImpl implements ExamService {
         log.info("Fetching all exams with pagination: {}", pageable);
 
         Page<Exam> examPage = examRepository.findAll(pageable);
-        return examPage.map(examMapper::toResponseDto);
+        return examPage.map(exam -> {
+            ExamResponseDto dto = examMapper.toResponseDto(exam);
+            dto.setQuestions(questionService.getQuestionsByExamId(exam.getId()));
+            return dto;
+        });
     }
 
     @Override
@@ -75,7 +101,11 @@ public class ExamServiceImpl implements ExamService {
 
         List<Exam> exams = examRepository.findByCreatedBy(createdBy);
         return exams.stream()
-                .map(examMapper::toResponseDto)
+                .map(exam -> {
+                    ExamResponseDto dto = examMapper.toResponseDto(exam);
+                    dto.setQuestions(questionService.getQuestionsByExamId(exam.getId()));
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -86,7 +116,11 @@ public class ExamServiceImpl implements ExamService {
 
         List<Exam> exams = examRepository.findBySubject(subject);
         return exams.stream()
-                .map(examMapper::toResponseDto)
+                .map(exam -> {
+                    ExamResponseDto dto = examMapper.toResponseDto(exam);
+                    dto.setQuestions(questionService.getQuestionsByExamId(exam.getId()));
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -97,7 +131,11 @@ public class ExamServiceImpl implements ExamService {
 
         List<Exam> exams = examRepository.findByTitleContainingIgnoreCase(title);
         return exams.stream()
-                .map(examMapper::toResponseDto)
+                .map(exam -> {
+                    ExamResponseDto dto = examMapper.toResponseDto(exam);
+                    dto.setQuestions(questionService.getQuestionsByExamId(exam.getId()));
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -108,7 +146,11 @@ public class ExamServiceImpl implements ExamService {
 
         List<Exam> exams = examRepository.findByDateRange(startDate, endDate);
         return exams.stream()
-                .map(examMapper::toResponseDto)
+                .map(exam -> {
+                    ExamResponseDto dto = examMapper.toResponseDto(exam);
+                    dto.setQuestions(questionService.getQuestionsByExamId(exam.getId()));
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -119,7 +161,11 @@ public class ExamServiceImpl implements ExamService {
 
         List<Exam> exams = examRepository.findByPointsRange(minPoints, maxPoints);
         return exams.stream()
-                .map(examMapper::toResponseDto)
+                .map(exam -> {
+                    ExamResponseDto dto = examMapper.toResponseDto(exam);
+                    dto.setQuestions(questionService.getQuestionsByExamId(exam.getId()));
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -129,12 +175,37 @@ public class ExamServiceImpl implements ExamService {
         log.info("Updating exam with ID: {}", id);
 
         Exam existingExam = findExamByIdOrThrow(id);
+
+        // Update exam basic fields
         examMapper.updateEntity(existingExam, examRequestDto);
+
+        // If questions are provided, replace existing questions
+        if (examRequestDto.getQuestions() != null && !examRequestDto.getQuestions().isEmpty()) {
+            // Delete existing questions
+            questionService.deleteQuestionsByExamId(id);
+
+            // Create new questions
+            List<String> questionIds = new ArrayList<>();
+            double totalPoints = 0.0;
+
+            for (var questionDto : examRequestDto.getQuestions()) {
+                QuestionResponseDto createdQuestion = questionService.createQuestion(id, questionDto);
+                questionIds.add(createdQuestion.getId());
+                totalPoints += createdQuestion.getPoints();
+            }
+
+            existingExam.setQuestionIds(questionIds);
+            existingExam.setTotalPoints(totalPoints);
+        }
 
         Exam updatedExam = examRepository.save(existingExam);
         log.info("Exam updated successfully with ID: {}", updatedExam.getId());
 
-        return examMapper.toResponseDto(updatedExam);
+        // Return response with questions loaded
+        ExamResponseDto responseDto = examMapper.toResponseDto(updatedExam);
+        responseDto.setQuestions(questionService.getQuestionsByExamId(updatedExam.getId()));
+
+        return responseDto;
     }
 
     @Override
@@ -146,6 +217,10 @@ public class ExamServiceImpl implements ExamService {
             throw new ExamNotFoundException("Exam not found with ID: " + id);
         }
 
+        // Delete associated questions (and their options)
+        questionService.deleteQuestionsByExamId(id);
+
+        // Delete the exam
         examRepository.deleteById(id);
         log.info("Exam deleted successfully with ID: {}", id);
     }

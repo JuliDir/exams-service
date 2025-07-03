@@ -34,9 +34,6 @@ public class ExamRequestDto {
     @NotEmpty(message = "Exam must have at least one question")
     private List<QuestionRequestDto> questions;
 
-    @Builder.Default
-    private String createdBy = "system";
-
     private String subject;
 
     private String difficultyLevel;

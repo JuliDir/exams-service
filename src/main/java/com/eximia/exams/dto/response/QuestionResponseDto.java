@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -13,10 +14,17 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuestionResponseDto {
-    private String questionId;
+    private String id;
     private String questionText;
     private QuestionType questionType;
     private Double points;
+    private String explanation;
     private List<OptionResponseDto> options;
     private Integer orderIndex;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private String createdBy;
+    private String updatedBy;
+    private String examId;
+    private List<String> optionIds;
 }

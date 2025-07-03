@@ -1,17 +1,34 @@
 package com.eximia.exams.service;
 
-import com.eximia.exams.domain.entities.Option;
 import com.eximia.exams.domain.entities.Question;
+import com.eximia.exams.dto.response.OptionResponseDto;
 import com.eximia.exams.exception.ValidationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class ValidationStrategyUtils {
 
-    public static void validatePointsMatch(Question question) {
-        List<Option> options = question.getOptions();
+    private static OptionService optionService;
 
-        double sumPoints = options.stream().mapToDouble(Option::getPoints).sum();
+    @Autowired
+    public void setOptionService(OptionService optionService) {
+        ValidationStrategyUtils.optionService = optionService;
+    }
+
+    public static void validatePointsMatch(Question question) {
+        if (question.getOptionIds() == null || question.getOptionIds().isEmpty()) {
+            throw new ValidationException("Question must have at least one option");
+        }
+
+        List<OptionResponseDto> options = optionService.getOptionsByQuestionId(question.getId());
+
+        double sumPoints = options.stream()
+                .mapToDouble(OptionResponseDto::getPoints)
+                .sum();
+
         if (Double.compare(sumPoints, question.getPoints()) != 0) {
             throw new ValidationException(
                     String.format("Total points of options (%.2f) must match question points (%.2f)",
@@ -19,5 +36,4 @@ public class ValidationStrategyUtils {
             );
         }
     }
-
 }
