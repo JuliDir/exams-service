@@ -1,7 +1,6 @@
 package com.eximia.exams.domain.enums;
 
 public enum QuestionType {
-    OPEN_ENDED("open_ended"),
     MULTIPLE_CHOICE("multiple_choice"),
     MULTIPLE_SELECTION("multiple_selection"),
     MATCHING("matching"),

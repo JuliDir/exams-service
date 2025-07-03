@@ -30,9 +30,6 @@ public class Exam {
     @Field("duration_minutes")
     private Integer durationInMinutes;
 
-    @Field("total_points")
-    private Double totalPoints;
-
     @Field("passing_score")
     private Double passingScore;
 
@@ -48,12 +45,12 @@ public class Exam {
     @Field("created_by")
     private String createdBy;
 
-    @Field("is_active")
-    private Boolean isActive;
-
-    @Field("category")
-    private String category;
+    @Field("subject")
+    private String subject;
 
     @Field("difficulty_level")
     private String difficultyLevel;
+
+    @Field("allow_multiple_choice")
+    private Boolean allowMultipleChoice;
 }

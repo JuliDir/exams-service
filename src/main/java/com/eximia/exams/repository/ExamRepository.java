@@ -14,24 +14,20 @@ import java.util.Optional;
 @Repository
 public interface ExamRepository extends MongoRepository<Exam, String> {
 
-    Page<Exam> findByIsActiveTrue(Pageable pageable);
-
     List<Exam> findByCreatedBy(String createdBy);
-
-    List<Exam> findByCategory(String category);
-
-    List<Exam> findByDifficultyLevel(String difficultyLevel);
 
     @Query("{ 'title': { $regex: ?0, $options: 'i' } }")
     List<Exam> findByTitleContainingIgnoreCase(String title);
 
     @Query("{ 'isActive': true, 'createdAt': { $gte: ?0, $lte: ?1 } }")
-    List<Exam> findActiveExamsByDateRange(LocalDateTime startDate, LocalDateTime endDate);
+    List<Exam> findByDateRange(LocalDateTime startDate, LocalDateTime endDate);
 
     @Query("{ 'totalPoints': { $gte: ?0, $lte: ?1 } }")
     List<Exam> findByPointsRange(Double minPoints, Double maxPoints);
 
-    Optional<Exam> findByIdAndIsActiveTrue(String id);
+    Optional<Exam> findById(String id);
 
     boolean existsByTitleAndCreatedBy(String title, String createdBy);
+
+    List<Exam> findBySubject(String subject);
 }

@@ -46,11 +46,11 @@ public class ExamController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Page<ExamResponseDto>> getAllActiveExams(
+    public ResponseEntity<Page<ExamResponseDto>> getAllExams(
             @PageableDefault(size = 20) Pageable pageable) {
-        log.info("REST: Fetching active exams with pagination");
+        log.info("REST: Fetching all exams with pagination");
 
-        Page<ExamResponseDto> examPage = examService.getAllActiveExams(pageable);
+        Page<ExamResponseDto> examPage = examService.getAllExams(pageable);
         return ResponseEntity.ok(examPage);
     }
 
@@ -68,7 +68,7 @@ public class ExamController {
             @PathVariable @NotBlank String category) {
         log.info("REST: Fetching exams by category: {}", category);
 
-        List<ExamResponseDto> exams = examService.getExamsByCategory(category);
+        List<ExamResponseDto> exams = examService.getExamsBySubject(category);
         return ResponseEntity.ok(exams);
     }
 
@@ -109,14 +109,6 @@ public class ExamController {
 
         ExamResponseDto responseDto = examService.updateExam(id, examRequestDto);
         return ResponseEntity.ok(responseDto);
-    }
-
-    @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<Void> deactivateExam(@PathVariable @NotBlank String id) {
-        log.info("REST: Deactivating exam with ID: {}", id);
-
-        examService.deactivateExam(id);
-        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")

@@ -20,11 +20,10 @@ public class OptionRequestDto {
     @Builder.Default
     private Boolean isCorrect = false;
 
-    private String explanation;
-
     private Integer orderIndex;
 
-    private String matchTarget;
+    @PositiveOrZero(message = "Points must be zero or positive")
+    private Double points;
 
     private String fillInAnswer;
 }

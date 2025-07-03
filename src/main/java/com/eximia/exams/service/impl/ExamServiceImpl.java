@@ -1,13 +1,16 @@
 package com.eximia.exams.service.impl;
 
 import com.eximia.exams.domain.entities.Exam;
+import com.eximia.exams.domain.entities.Question;
 import com.eximia.exams.dto.request.ExamRequestDto;
 import com.eximia.exams.dto.response.ExamResponseDto;
 import com.eximia.exams.exception.ExamNotFoundException;
 import com.eximia.exams.exception.ValidationException;
 import com.eximia.exams.mapper.ExamMapper;
+import com.eximia.exams.mapper.QuestionMapper;
 import com.eximia.exams.repository.ExamRepository;
 import com.eximia.exams.service.ExamService;
+import com.eximia.exams.service.QuestionValidationFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,6 +29,8 @@ public class ExamServiceImpl implements ExamService {
 
     private final ExamRepository examRepository;
     private final ExamMapper examMapper;
+    private final QuestionMapper questionMapper;
+    private final QuestionValidationFactory questionValidationFactory;
 
     @Override
     @Transactional
@@ -33,6 +38,10 @@ public class ExamServiceImpl implements ExamService {
         log.info("Creating exam with title: {}", examRequestDto.getTitle());
 
         validateExamDoesNotExist(examRequestDto.getTitle(), examRequestDto.getCreatedBy());
+        examRequestDto.getQuestions().forEach(qDto -> {
+            Question question = questionMapper.toEntity(qDto);
+            questionValidationFactory.forType(question.getQuestionType()).validate(question);
+        });
 
         Exam exam = examMapper.toEntity(examRequestDto);
         Exam savedExam = examRepository.save(exam);
@@ -52,10 +61,10 @@ public class ExamServiceImpl implements ExamService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ExamResponseDto> getAllActiveExams(Pageable pageable) {
-        log.info("Fetching active exams with pagination: {}", pageable);
+    public Page<ExamResponseDto> getAllExams(Pageable pageable) {
+        log.info("Fetching all exams with pagination: {}", pageable);
 
-        Page<Exam> examPage = examRepository.findByIsActiveTrue(pageable);
+        Page<Exam> examPage = examRepository.findAll(pageable);
         return examPage.map(examMapper::toResponseDto);
     }
 
@@ -72,10 +81,10 @@ public class ExamServiceImpl implements ExamService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ExamResponseDto> getExamsByCategory(String category) {
-        log.info("Fetching exams by category: {}", category);
+    public List<ExamResponseDto> getExamsBySubject(String subject) {
+        log.info("Fetching exams by subject: {}", subject);
 
-        List<Exam> exams = examRepository.findByCategory(category);
+        List<Exam> exams = examRepository.findBySubject(subject);
         return exams.stream()
                 .map(examMapper::toResponseDto)
                 .collect(Collectors.toList());
@@ -97,7 +106,7 @@ public class ExamServiceImpl implements ExamService {
     public List<ExamResponseDto> getExamsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         log.info("Fetching exams between {} and {}", startDate, endDate);
 
-        List<Exam> exams = examRepository.findActiveExamsByDateRange(startDate, endDate);
+        List<Exam> exams = examRepository.findByDateRange(startDate, endDate);
         return exams.stream()
                 .map(examMapper::toResponseDto)
                 .collect(Collectors.toList());
@@ -130,19 +139,6 @@ public class ExamServiceImpl implements ExamService {
 
     @Override
     @Transactional
-    public void deactivateExam(String id) {
-        log.info("Deactivating exam with ID: {}", id);
-
-        Exam exam = findExamByIdOrThrow(id);
-        exam.setIsActive(false);
-        exam.setUpdatedAt(LocalDateTime.now());
-
-        examRepository.save(exam);
-        log.info("Exam deactivated successfully with ID: {}", id);
-    }
-
-    @Override
-    @Transactional
     public void deleteExam(String id) {
         log.info("Deleting exam with ID: {}", id);
 
@@ -155,7 +151,7 @@ public class ExamServiceImpl implements ExamService {
     }
 
     private Exam findExamByIdOrThrow(String id) {
-        return examRepository.findByIdAndIsActiveTrue(id)
+        return examRepository.findById(id)
                 .orElseThrow(() -> new ExamNotFoundException("Exam not found with ID: " + id));
     }
 

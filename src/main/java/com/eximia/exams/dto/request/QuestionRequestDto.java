@@ -35,7 +35,5 @@ public class QuestionRequestDto {
     @Valid
     private List<OptionRequestDto> options;
 
-    private String correctAnswer;
-    private Integer timeLimitInSeconds;
     private Integer orderIndex;
 }
