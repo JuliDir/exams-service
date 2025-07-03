@@ -1,12 +1,10 @@
 package com.eximia.exams.domain.enums;
 
 public enum QuestionType {
-    MULTIPLE_CHOICE("multiple_choice"),
-    MULTIPLE_SELECTION("multiple_selection"),
-    MATCHING("matching"),
-    TRUE_FALSE("true_false"),
-    FILL_IN_THE_BLANK("fill_in_the_blank"),
-    DRAG_AND_DROP("drag_and_drop");
+    MULTIPLE_CHOICE("MULTIPLE_CHOICE"),
+    MULTIPLE_SELECTION("MULTIPLE_SELECTION"),
+    TRUE_FALSE("TRUE_FALSE"),
+    DRAG_AND_DROP("DRAG_AND_DROP"),;
 
     private final String value;
 

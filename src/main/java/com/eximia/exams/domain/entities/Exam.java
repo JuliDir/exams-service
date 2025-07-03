@@ -53,4 +53,7 @@ public class Exam {
 
     @Field("allow_multiple_choice")
     private Boolean allowMultipleChoice;
+
+    @Field("allow_true_false")
+    private Boolean allowTrueFalse;
 }

@@ -25,22 +25,25 @@ public class ExamRequestDto {
     @Positive(message = "Duration must be positive")
     private Integer durationInMinutes;
 
-    @NotNull(message = "Passing score is required")
     @Min(value = 0, message = "Passing score must be at least 0")
     @Max(value = 100, message = "Passing score must not exceed 100")
-    private Double passingScore;
+    @Builder.Default
+    private Double passingScore = 60.0;
 
     @Valid
     @NotEmpty(message = "Exam must have at least one question")
     private List<QuestionRequestDto> questions;
 
-    @NotBlank(message = "Created by is required")
-    private String createdBy;
+    @Builder.Default
+    private String createdBy = "system";
 
-    private String category;
+    private String subject;
 
     private String difficultyLevel;
 
-    @NotNull(message = "Allow multiple choice configuration is required")
-    private Boolean allowMultipleChoice;
+    @Builder.Default
+    private Boolean allowMultipleChoice = true;
+
+    @Builder.Default
+    private Boolean allowTrueFalse = true;
 }

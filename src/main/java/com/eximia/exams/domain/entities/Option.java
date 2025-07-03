@@ -26,7 +26,4 @@ public class Option {
 
     @Field("order_index")
     private Integer orderIndex;
-
-    @Field("fill_in_answer")
-    private String fillInAnswer;
 }
