@@ -5,14 +5,17 @@ import com.eximia.exams.dto.request.QuestionRequestDto;
 import com.eximia.exams.dto.response.QuestionResponseDto;
 import org.mapstruct.*;
 
-@Mapper(
-        componentModel = "spring",
-        uses = {OptionMapper.class}
-)
+@Mapper(componentModel = "spring")
 public interface QuestionMapper {
 
-    @Mapping(target = "questionId", expression = "java(java.util.UUID.randomUUID().toString())")
-    Question toEntity(QuestionRequestDto requestDto);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
+    Question createEntity(QuestionRequestDto requestDto);
 
+    @Mapping(target = "options", ignore = true)
     QuestionResponseDto toResponseDto(Question question);
+
+    @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
+    void updateEntity(@MappingTarget Question question, QuestionRequestDto requestDto);
 }

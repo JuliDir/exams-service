@@ -1,19 +1,22 @@
 package com.eximia.exams.domain.entities;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Option {
+@Document(collection = "options")
+public class Option extends AuditableEntity {
 
-    @Field("option_id")
-    private String optionId;
+    @Id
+    private String id;
 
     @Field("option_text")
     private String optionText;
@@ -26,4 +29,10 @@ public class Option {
 
     @Field("order_index")
     private Integer orderIndex;
+
+    @Field("explanation")
+    private String explanation;
+
+    @Field("question_id")
+    private String questionId;
 }

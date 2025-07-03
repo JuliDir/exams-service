@@ -1,22 +1,19 @@
 package com.eximia.exams.domain.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "exams")
-public class Exam {
+public class Exam extends AuditableEntity {
 
     @Id
     private String id;
@@ -33,17 +30,8 @@ public class Exam {
     @Field("passing_score")
     private Double passingScore;
 
-    @Field("questions")
-    private List<Question> questions;
-
-    @Field("created_at")
-    private LocalDateTime createdAt;
-
-    @Field("updated_at")
-    private LocalDateTime updatedAt;
-
-    @Field("created_by")
-    private String createdBy;
+    @Field("question_ids")
+    private List<String> questionIds;
 
     @Field("subject")
     private String subject;
@@ -56,4 +44,7 @@ public class Exam {
 
     @Field("allow_true_false")
     private Boolean allowTrueFalse;
+
+    @Field("total_points")
+    private Double totalPoints;
 }

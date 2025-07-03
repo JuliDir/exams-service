@@ -13,26 +13,32 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class MultipleChoiceValidationStrategy implements QuestionValidationStrategy {
+public class DragAndDropValidationStrategy implements QuestionValidationStrategy {
 
     private final OptionService optionService;
 
     @Override
     public QuestionType getSupportedType() {
-        return QuestionType.MULTIPLE_CHOICE;
+        return QuestionType.DRAG_AND_DROP;
     }
 
     @Override
     public void validate(Question question) {
         List<OptionResponseDto> options = optionService.getOptionsByQuestionId(question.getId());
 
-        long correctCount = options.stream()
-                .filter(OptionResponseDto::getIsCorrect)
-                .count();
-
-        if (correctCount != 1) {
+        if (options.size() < 2) {
             throw new ValidationException(
-                    String.format("Multiple choice question must have exactly one correct option, found %d", correctCount)
+                    "Drag and drop question must have at least two options, found " + options.size()
+            );
+        }
+
+        // For drag and drop, all options should have orderIndex
+        boolean hasOrderIndex = options.stream()
+                .allMatch(option -> option.getOrderIndex() != null);
+
+        if (!hasOrderIndex) {
+            throw new ValidationException(
+                    "All options in drag and drop question must have order index"
             );
         }
 

@@ -1,3 +1,4 @@
+// QuestionRequestDto.java
 package com.eximia.exams.dto.request;
 
 import com.eximia.exams.domain.enums.QuestionType;
@@ -23,6 +24,7 @@ public class QuestionRequestDto {
     @NotNull(message = "Question type is required")
     private QuestionType questionType;
 
+    @NotNull(message = "Points is required")
     @PositiveOrZero(message = "Points must be positive or zero")
     private Double points;
 
@@ -33,5 +35,7 @@ public class QuestionRequestDto {
     @NotEmpty(message = "Question must have at least one option")
     private List<OptionRequestDto> options;
 
+    @Min(value = 1, message = "Order index must be at least 1")
     private Integer orderIndex;
+
 }

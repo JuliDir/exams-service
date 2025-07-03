@@ -1,22 +1,25 @@
 package com.eximia.exams.domain.entities;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import com.eximia.exams.domain.enums.QuestionType;
 
 import java.util.List;
 
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Question {
+@Document(collection = "questions")
+public class Question extends AuditableEntity {
 
-    @Field("question_id")
-    private String questionId;
+    @Id
+    private String id;
 
     @Field("question_text")
     private String questionText;
@@ -27,9 +30,15 @@ public class Question {
     @Field("points")
     private Double points;
 
-    @Field("options")
-    private List<Option> options;
+    @Field("option_ids")
+    private List<String> optionIds;
 
     @Field("order_index")
     private Integer orderIndex;
+
+    @Field("explanation")
+    private String explanation;
+
+    @Field("exam_id")
+    private String examId;
 }

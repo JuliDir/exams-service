@@ -13,13 +13,13 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class MultipleChoiceValidationStrategy implements QuestionValidationStrategy {
+public class MultipleSelectionValidationStrategy implements QuestionValidationStrategy {
 
     private final OptionService optionService;
 
     @Override
     public QuestionType getSupportedType() {
-        return QuestionType.MULTIPLE_CHOICE;
+        return QuestionType.MULTIPLE_SELECTION;
     }
 
     @Override
@@ -30,9 +30,15 @@ public class MultipleChoiceValidationStrategy implements QuestionValidationStrat
                 .filter(OptionResponseDto::getIsCorrect)
                 .count();
 
-        if (correctCount != 1) {
+        if (correctCount < 2) {
             throw new ValidationException(
-                    String.format("Multiple choice question must have exactly one correct option, found %d", correctCount)
+                    "Multiple selection question must have at least two correct options, found " + correctCount
+            );
+        }
+
+        if (options.size() < 3) {
+            throw new ValidationException(
+                    "Multiple selection question must have at least three options total, found " + options.size()
             );
         }
 
