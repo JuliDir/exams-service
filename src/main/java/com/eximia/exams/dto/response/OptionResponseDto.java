@@ -14,6 +14,5 @@ public class OptionResponseDto {
     private String optionText;
     private Boolean isCorrect;
     private Integer orderIndex;
-    private String fillInAnswer;
     private Double points;
 }

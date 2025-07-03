@@ -11,19 +11,18 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class MultipleChoiceValidationStrategy implements QuestionValidationStrategy {
+public class TrueFalseValidationStrategy implements QuestionValidationStrategy {
 
     @Override
     public QuestionType getSupportedType() {
-        return QuestionType.MULTIPLE_CHOICE;
+        return QuestionType.TRUE_FALSE;
     }
 
     @Override
     public void validate(Question question) {
         List<Option> options = question.getOptions();
-        long correctCount = options.stream().filter(Option::getIsCorrect).count();
-        if (correctCount != 1) {
-            throw new ValidationException(String.format("Multiple choice question must have exactly one correct option, found %d", correctCount));
+        if (options.size() > 1) {
+            throw new ValidationException("True or false question must have exactly one option, found " + options.size());
         }
         ValidationStrategyUtils.validatePointsMatch(question);
     }

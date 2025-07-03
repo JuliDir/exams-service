@@ -26,13 +26,11 @@ public class QuestionRequestDto {
     @PositiveOrZero(message = "Points must be positive or zero")
     private Double points;
 
-    @Builder.Default
-    private Boolean isRequired = true;
-
     @Size(max = 1000, message = "Explanation must not exceed 1000 characters")
     private String explanation;
 
     @Valid
+    @NotEmpty(message = "Question must have at least one option")
     private List<OptionRequestDto> options;
 
     private Integer orderIndex;

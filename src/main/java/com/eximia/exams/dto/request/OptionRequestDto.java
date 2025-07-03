@@ -24,6 +24,4 @@ public class OptionRequestDto {
 
     @PositiveOrZero(message = "Points must be zero or positive")
     private Double points;
-
-    private String fillInAnswer;
 }
