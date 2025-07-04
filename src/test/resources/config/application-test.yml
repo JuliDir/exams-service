@@ -1,0 +1,26 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  data:
+    mongodb:
+      host: localhost
+      port: 0
+      database: test_exam_db
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
+
+logging:
+  level:
+    com.eximia.exams: DEBUG
+    org.springframework.data.mongodb: DEBUG
+
+management:
+  health:
+    rabbit:
+      enabled: false
