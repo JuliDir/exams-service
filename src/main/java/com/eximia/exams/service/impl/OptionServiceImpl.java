@@ -41,101 +41,18 @@ public class OptionServiceImpl implements OptionService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Page<OptionResponseDto> getOptionsByQuestionId(String questionId, Pageable pageable) {
-        log.info("Fetching options for question ID: {} with pagination", questionId);
-
-        Page<Option> optionPage = optionRepository.findByQuestionId(questionId, pageable);
-        return optionPage.map(optionMapper::toResponseDto);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<OptionResponseDto> getOptionsByCreator(String createdBy) {
-        log.info("Fetching options created by: {}", createdBy);
-
-        List<Option> options = optionRepository.findByCreatedBy(createdBy);
-        return options.stream()
-                .map(optionMapper::toResponseDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<OptionResponseDto> getCorrectOptionsByQuestionId(String questionId) {
-        log.info("Fetching correct options for question ID: {}", questionId);
-
-        List<Option> options = optionRepository.findCorrectOptionsByQuestionId(questionId);
-        return options.stream()
-                .map(optionMapper::toResponseDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<OptionResponseDto> getIncorrectOptionsByQuestionId(String questionId) {
-        log.info("Fetching incorrect options for question ID: {}", questionId);
-
-        List<Option> options = optionRepository.findIncorrectOptionsByQuestionId(questionId);
-        return options.stream()
-                .map(optionMapper::toResponseDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<OptionResponseDto> searchOptionsByText(String optionText) {
-        log.info("Searching options by text: {}", optionText);
-
-        List<Option> options = optionRepository.findByOptionTextContainingIgnoreCase(optionText);
-        return options.stream()
-                .map(optionMapper::toResponseDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<OptionResponseDto> getOptionsByPointsRange(Double minPoints, Double maxPoints) {
-        log.info("Fetching options with points between {} and {}", minPoints, maxPoints);
-
-        List<Option> options = optionRepository.findByPointsRange(minPoints, maxPoints);
-        return options.stream()
-                .map(optionMapper::toResponseDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     @Transactional
     public OptionResponseDto updateOption(String id, OptionRequestDto optionRequestDto) {
         log.info("Updating option with ID: {}", id);
 
         Option existingOption = findOptionByIdOrThrow(id);
 
-        // Update option fields
         optionMapper.updateEntity(existingOption, optionRequestDto);
         existingOption.setUpdatedAt(LocalDateTime.now());
 
         Option updatedOption = optionRepository.save(existingOption);
 
         log.info("Option updated successfully with ID: {}", updatedOption.getId());
-        return optionMapper.toResponseDto(updatedOption);
-    }
-
-    @Override
-    @Transactional
-    public OptionResponseDto updateOptionInQuestion(String id, String questionId, OptionRequestDto optionRequestDto) {
-        log.info("Updating option with ID: {} for question ID: {}", id, questionId);
-
-        Option existingOption = optionRepository.findByIdAndQuestionId(id, questionId)
-                .orElseThrow(() -> new ExamNotFoundException("Option not found with ID: " + id + " for question ID: " + questionId));
-
-        // Update option fields
-        optionMapper.updateEntity(existingOption, optionRequestDto);
-        existingOption.setUpdatedAt(LocalDateTime.now());
-
-        Option updatedOption = optionRepository.save(existingOption);
-
-        log.info("Option updated successfully with ID: {} for question ID: {}", updatedOption.getId(), questionId);
         return optionMapper.toResponseDto(updatedOption);
     }
 
@@ -150,19 +67,6 @@ public class OptionServiceImpl implements OptionService {
 
         optionRepository.deleteById(id);
         log.info("Option deleted successfully with ID: {}", id);
-    }
-
-    @Override
-    @Transactional
-    public void deleteOptionFromQuestion(String id, String questionId) {
-        log.info("Deleting option with ID: {} from question ID: {}", id, questionId);
-
-        if (!optionRepository.existsByIdAndQuestionId(id, questionId)) {
-            throw new ExamNotFoundException("Option not found with ID: " + id + " for question ID: " + questionId);
-        }
-
-        optionRepository.deleteById(id);
-        log.info("Option deleted successfully with ID: {} from question ID: {}", id, questionId);
     }
 
     @Override
@@ -183,32 +87,6 @@ public class OptionServiceImpl implements OptionService {
         log.info("Options deleted successfully for {} questions", questionIds.size());
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public long countOptionsByQuestionId(String questionId) {
-        return optionRepository.countByQuestionId(questionId);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public long countCorrectOptionsByQuestionId(String questionId) {
-        return optionRepository.countCorrectOptionsByQuestionId(questionId);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public long countIncorrectOptionsByQuestionId(String questionId) {
-        return optionRepository.countIncorrectOptionsByQuestionId(questionId);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public void validateOptionBelongsToQuestion(String optionId, String questionId) {
-        if (!optionRepository.existsByIdAndQuestionId(optionId, questionId)) {
-            throw new CustomException("Option with ID: " + optionId + " does not belong to question ID: " + questionId);
-        }
-    }
-
     private Option findOptionByIdOrThrow(String id) {
         return optionRepository.findById(id)
                 .orElseThrow(() -> new ExamNotFoundException("Option not found with ID: " + id));
@@ -222,7 +100,6 @@ public class OptionServiceImpl implements OptionService {
             throw new ExamNotFoundException("Question not found with ID: " + questionId);
         }
 
-        // Create option entity
         Option option = optionMapper.createEntity(optionRequestDto);
         option.setQuestionId(questionId);
 
@@ -238,17 +115,6 @@ public class OptionServiceImpl implements OptionService {
         log.info("Fetching option with ID: {}", id);
 
         Option option = findOptionByIdOrThrow(id);
-        return optionMapper.toResponseDto(option);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public OptionResponseDto getOptionByIdAndQuestionId(String id, String questionId) {
-        log.info("Fetching option with ID: {} for question ID: {}", id, questionId);
-
-        Option option = optionRepository.findByIdAndQuestionId(id, questionId)
-                .orElseThrow(() -> new ExamNotFoundException("Option not found with ID: " + id + " for question ID: " + questionId));
-
         return optionMapper.toResponseDto(option);
     }
 }
