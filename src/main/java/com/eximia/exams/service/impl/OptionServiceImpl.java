@@ -4,7 +4,7 @@ import com.eximia.exams.domain.entities.Option;
 import com.eximia.exams.dto.request.OptionRequestDto;
 import com.eximia.exams.dto.response.OptionResponseDto;
 import com.eximia.exams.exception.ExamNotFoundException;
-import com.eximia.exams.exception.ValidationException;
+import com.eximia.exams.exception.CustomException;
 import com.eximia.exams.mapper.OptionMapper;
 import com.eximia.exams.repository.OptionRepository;
 import com.eximia.exams.repository.QuestionRepository;
@@ -205,7 +205,7 @@ public class OptionServiceImpl implements OptionService {
     @Transactional(readOnly = true)
     public void validateOptionBelongsToQuestion(String optionId, String questionId) {
         if (!optionRepository.existsByIdAndQuestionId(optionId, questionId)) {
-            throw new ValidationException("Option with ID: " + optionId + " does not belong to question ID: " + questionId);
+            throw new CustomException("Option with ID: " + optionId + " does not belong to question ID: " + questionId);
         }
     }
 

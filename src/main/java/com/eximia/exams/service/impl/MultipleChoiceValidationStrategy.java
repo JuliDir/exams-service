@@ -3,7 +3,7 @@ package com.eximia.exams.service.impl;
 import com.eximia.exams.domain.entities.Question;
 import com.eximia.exams.domain.enums.QuestionType;
 import com.eximia.exams.dto.response.OptionResponseDto;
-import com.eximia.exams.exception.ValidationException;
+import com.eximia.exams.exception.CustomException;
 import com.eximia.exams.service.OptionService;
 import com.eximia.exams.service.QuestionValidationStrategy;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class MultipleChoiceValidationStrategy implements QuestionValidationStrat
                 .count();
 
         if (correctCount != 1) {
-            throw new ValidationException(
+            throw new CustomException(
                     String.format("Multiple choice question must have exactly one correct option, found %d", correctCount)
             );
         }
@@ -42,7 +42,7 @@ public class MultipleChoiceValidationStrategy implements QuestionValidationStrat
                 .sum();
 
         if (Double.compare(sumPoints, question.getPoints()) != 0) {
-            throw new ValidationException(
+            throw new CustomException(
                     String.format("Total points of options (%.2f) must match question points (%.2f)",
                             sumPoints, question.getPoints())
             );

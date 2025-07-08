@@ -6,7 +6,7 @@ import com.eximia.exams.dto.request.QuestionRequestDto;
 import com.eximia.exams.dto.response.ExamResponseDto;
 import com.eximia.exams.dto.response.QuestionResponseDto;
 import com.eximia.exams.exception.ExamNotFoundException;
-import com.eximia.exams.exception.ValidationException;
+import com.eximia.exams.exception.CustomException;
 import com.eximia.exams.mapper.ExamMapper;
 import com.eximia.exams.repository.ExamRepository;
 import com.eximia.exams.service.ExamService;
@@ -232,7 +232,7 @@ public class ExamServiceImpl implements ExamService {
 
     private void validateExamDoesNotExist(String title, String createdBy) {
         if (examRepository.existsByTitleAndCreatedBy(title, createdBy)) {
-            throw new ValidationException(
+            throw new CustomException(
                     String.format("Exam with title '%s' already exists for creator '%s'", title, createdBy)
             );
         }
