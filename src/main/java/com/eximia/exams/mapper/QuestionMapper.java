@@ -11,9 +11,8 @@ public interface QuestionMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
-    Question createEntity(QuestionRequestDto requestDto);
+    Question toEntity(QuestionRequestDto requestDto);
 
-    @Mapping(target = "options", ignore = true)
     QuestionResponseDto toResponseDto(Question question);
 
     @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")

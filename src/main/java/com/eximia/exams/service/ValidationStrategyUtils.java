@@ -2,7 +2,7 @@ package com.eximia.exams.service;
 
 import com.eximia.exams.domain.entities.Question;
 import com.eximia.exams.dto.response.OptionResponseDto;
-import com.eximia.exams.exception.ValidationException;
+import com.eximia.exams.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ public class ValidationStrategyUtils {
 
     public static void validatePointsMatch(Question question) {
         if (question.getOptionIds() == null || question.getOptionIds().isEmpty()) {
-            throw new ValidationException("Question must have at least one option");
+            throw new CustomException("Question must have at least one option");
         }
 
         List<OptionResponseDto> options = optionService.getOptionsByQuestionId(question.getId());
@@ -30,7 +30,7 @@ public class ValidationStrategyUtils {
                 .sum();
 
         if (Double.compare(sumPoints, question.getPoints()) != 0) {
-            throw new ValidationException(
+            throw new CustomException(
                     String.format("Total points of options (%.2f) must match question points (%.2f)",
                             sumPoints, question.getPoints())
             );

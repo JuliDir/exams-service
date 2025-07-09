@@ -1,7 +1,7 @@
 package com.eximia.exams.service;
 
 import com.eximia.exams.domain.enums.QuestionType;
-import com.eximia.exams.exception.ValidationException;
+import com.eximia.exams.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +23,7 @@ public class QuestionValidationFactory {
     public QuestionValidationStrategy forType(QuestionType type) {
         QuestionValidationStrategy strategy = strategies.get(type);
         if (strategy == null) {
-            throw new ValidationException(String.format("No validation strategy found for question type: %s", type));
+            throw new CustomException(String.format("No validation strategy found for question type: %s", type));
         }
         return strategy;
     }

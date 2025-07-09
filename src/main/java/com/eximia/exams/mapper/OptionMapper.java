@@ -11,7 +11,7 @@ public interface OptionMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
-    Option createEntity(OptionRequestDto requestDto);
+    Option toEntity(OptionRequestDto requestDto);
 
     OptionResponseDto toResponseDto(Option option);
 
