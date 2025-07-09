@@ -14,15 +14,11 @@ import com.eximia.exams.service.PointsDistributionService;
 import com.eximia.exams.service.QuestionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -41,9 +37,10 @@ public class ExamServiceImpl implements ExamService {
     public ExamResponseDto createExam(ExamRequestDto examRequestDto) {
         log.info("Creating exam with title: {}", examRequestDto.getTitle());
 
+        // Distribute question points
         pointsDistributionService.distributeExamPoints(examRequestDto);
 
-        Exam exam = examMapper.createEntity(examRequestDto);
+        Exam exam = examMapper.toEntity(examRequestDto);
         exam.setQuestionIds(new ArrayList<>());
         exam.setTotalPoints(MAX_POINTS);
 

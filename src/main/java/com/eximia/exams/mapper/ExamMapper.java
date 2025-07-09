@@ -1,4 +1,3 @@
-// Updated ExamMapper.java
 package com.eximia.exams.mapper;
 
 import com.eximia.exams.domain.entities.Exam;
@@ -12,9 +11,9 @@ public interface ExamMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
-    Exam createEntity(ExamRequestDto requestDto);
+    @Mapping(target = "questionIds", expression = "java(new java.util.ArrayList<>())")
+    Exam toEntity(ExamRequestDto requestDto);
 
-    @Mapping(target = "questions", ignore = true)
     ExamResponseDto toResponseDto(Exam exam);
 
     @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")

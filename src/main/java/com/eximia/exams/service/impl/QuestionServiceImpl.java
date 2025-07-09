@@ -1,7 +1,6 @@
 package com.eximia.exams.service.impl;
 
 import com.eximia.exams.domain.entities.Question;
-import com.eximia.exams.domain.enums.QuestionType;
 import com.eximia.exams.dto.request.QuestionRequestDto;
 import com.eximia.exams.dto.response.QuestionResponseDto;
 import com.eximia.exams.exception.ExamNotFoundException;
@@ -16,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,11 +39,11 @@ public class QuestionServiceImpl implements QuestionService {
             throw new ExamNotFoundException("Exam not found with ID: " + examId);
         }
 
+        // Validate and distribute points
+        questionValidationFactory.forType(questionRequestDto.getQuestionType()).validate(questionRequestDto);
         pointsDistributionService.distributeQuestionPoints(questionRequestDto);
 
-        Question question = questionMapper.createEntity(questionRequestDto);
-
-        questionValidationFactory.forType(question.getQuestionType()).validate(question);
+        Question question = questionMapper.toEntity(questionRequestDto);
 
         question.setExamId(examId);
         Question savedQuestion = questionRepository.save(question);
@@ -60,7 +57,10 @@ public class QuestionServiceImpl implements QuestionService {
         savedQuestion = questionRepository.save(savedQuestion);
 
         log.info("Question created successfully with ID: {}", savedQuestion.getId());
-        return questionMapper.toResponseDto(savedQuestion);
+        QuestionResponseDto questionResponseDto = questionMapper.toResponseDto(savedQuestion);
+        questionResponseDto.setOptions(optionService.getOptionsByQuestionId(questionId));
+
+        return questionResponseDto;
     }
 
     @Override
@@ -69,7 +69,10 @@ public class QuestionServiceImpl implements QuestionService {
         log.info("Fetching question with ID: {}", id);
 
         Question question = findQuestionByIdOrThrow(id);
-        return questionMapper.toResponseDto(question);
+        QuestionResponseDto questionResponseDto = questionMapper.toResponseDto(question);
+        questionResponseDto.setOptions(optionService.getOptionsByQuestionId(id));
+
+        return questionResponseDto;
     }
 
     @Override
@@ -80,6 +83,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<Question> questions = questionRepository.findByExamIdOrderByOrderIndexAsc(examId);
         return questions.stream()
                 .map(questionMapper::toResponseDto)
+                .peek(questionResponseDto -> questionResponseDto.setOptions(optionService.getOptionsByQuestionId(questionResponseDto.getId())))
                 .collect(Collectors.toList());
     }
 
@@ -88,14 +92,12 @@ public class QuestionServiceImpl implements QuestionService {
     public QuestionResponseDto updateQuestion(String id, QuestionRequestDto questionRequestDto) {
         log.info("Updating question with ID: {}", id);
 
-        Question existingQuestion = findQuestionByIdOrThrow(id);
+        questionValidationFactory.forType(questionRequestDto.getQuestionType()).validate(questionRequestDto);
 
+        Question existingQuestion = findQuestionByIdOrThrow(id);
         questionMapper.updateEntity(existingQuestion, questionRequestDto);
-        existingQuestion.setUpdatedAt(LocalDateTime.now());
 
         Question updatedQuestion = questionRepository.save(existingQuestion);
-
-        questionValidationFactory.forType(updatedQuestion.getQuestionType()).validate(updatedQuestion);
 
         log.info("Question updated successfully with ID: {}", updatedQuestion.getId());
         return questionMapper.toResponseDto(updatedQuestion);
@@ -106,7 +108,7 @@ public class QuestionServiceImpl implements QuestionService {
     public void deleteQuestion(String id) {
         log.info("Deleting question with ID: {}", id);
 
-        Question question = findQuestionByIdOrThrow(id);
+        findQuestionByIdOrThrow(id);
 
         optionService.deleteOptionsByQuestionId(id);
 

@@ -100,7 +100,7 @@ public class OptionServiceImpl implements OptionService {
             throw new ExamNotFoundException("Question not found with ID: " + questionId);
         }
 
-        Option option = optionMapper.createEntity(optionRequestDto);
+        Option option = optionMapper.toEntity(optionRequestDto);
         option.setQuestionId(questionId);
 
         Option savedOption = optionRepository.save(option);

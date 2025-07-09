@@ -24,9 +24,9 @@ public class QuestionRequestDto {
     @NotNull(message = "Question type is required")
     private QuestionType questionType;
 
-    @NotNull(message = "Points is required")
     @PositiveOrZero(message = "Points must be positive or zero")
-    private Double points;
+    @Builder.Default
+    private Double points = 0.0;
 
     @Size(max = 1000, message = "Explanation must not exceed 1000 characters")
     private String explanation;
