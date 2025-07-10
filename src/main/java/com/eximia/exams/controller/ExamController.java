@@ -33,14 +33,6 @@ public class ExamController {
     private final ExamService examService;
     private final ExamQueryService examQueryService;
 
-    @PostMapping
-    @Operation(summary = "Create a new exam")
-    public ResponseEntity<ExamResponseDto> createExam(@Valid @RequestBody ExamRequestDto examRequestDto) {
-        log.info("REST: Creating exam with title: {}", examRequestDto.getTitle());
-        ExamResponseDto responseDto = examService.createExam(examRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
-    }
-
     @GetMapping("/{id}")
     @Operation(summary = "Get exam by ID")
     public ResponseEntity<ExamResponseDto> getExamById(@PathVariable @NotBlank String id) {
