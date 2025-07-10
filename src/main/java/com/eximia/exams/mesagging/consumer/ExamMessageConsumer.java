@@ -14,7 +14,7 @@ public class ExamMessageConsumer {
 
     private final ExamService examService;
 
-    @RabbitListener(queues = "exam.queue")
+    @RabbitListener(queues = "exam.request.queue")
     public void handleExamCreation(ExamRequestDto examRequestDto) {
         try {
             log.info("Received exam creation message for title: {}", examRequestDto.getTitle());
